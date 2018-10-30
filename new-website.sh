@@ -19,6 +19,7 @@ else
  echo "${GREEN}Installing Apache...${RESET}"
  sudo apt-get -y install apache2
  sudo ufw allow 'Apache Full'
+ sudo update-rc.d apache2 enable &&
 fi
 
 # Create directories

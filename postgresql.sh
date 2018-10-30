@@ -19,7 +19,8 @@ RESET=`tput sgr0`
 # Install PostgreSQL
 
 {
-  sudo apt-get -y install postgresql postgresql-contrib &&
+  sudo apt-get -y install postgresql postgresql-contrib
+  sudo update-rc.d postgresql enable &&
   echo -e "${GREEN}Installed PostgreSQL${RESET}"
 } || {
   echo -e "${RED}Unable to install PostgreSQL${RESET}"
@@ -29,11 +30,13 @@ RESET=`tput sgr0`
 # Create new PostgreSQL user
 
 read -e -p "Create new PostgreSQL user? [y/n] " -i "y" newUser
+echo "When it asks you for a username, be sure to use your Ubuntu account name"
 
 if [[ $newUser = "Y" || $newUser = "y" ]]; then
   sudo -u postgres createuser --interactive
   read -e -p "Enter the name of the PostgreSQL user you just created: " username
   sudo -u postgres createdb $username &&
+  echo "host    ${username}    ${username}    0.0.0.0/0    md5" | sudo EDITOR="tee -a" /etc/postgresql/9.5/main/postgresql.conf 
   echo -e "${GREEN}Successfully created PostgreSQL user: $username${RESET}"
 else
   echo -e "${RED}Skipping Postgres user creation...${RESET}"
