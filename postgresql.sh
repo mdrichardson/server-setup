@@ -36,6 +36,19 @@ if [[ $newUser = "Y" || $newUser = "y" ]]; then
   sudo -u postgres createuser --interactive
   read -e -p "Enter the name of the PostgreSQL user you just created: " username
   sudo -u postgres createdb $username &&
+  # The next line allows you to remotely connect to postgres. You may need to change the 9.5 to the actual postgres version you have
+  # When setting up PGAdmin, use:
+    # Connection:
+      # Host: localhost
+      # Port: 5432
+      # Username: Username entered in this script
+    # SSH Tunnel
+      # Use: yes
+      # Tunnel host: IP of server
+      # Port: 22
+      # Username: Your Ubuntu username
+      # Auth: Identity File
+      # Identity File: Use the private key .pem file
   echo "host    ${username}    ${username}    0.0.0.0/0    md5" | sudo EDITOR="tee -a" /etc/postgresql/9.5/main/postgresql.conf 
   echo -e "${GREEN}Successfully created PostgreSQL user: $username${RESET}"
 else
