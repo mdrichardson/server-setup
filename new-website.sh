@@ -13,13 +13,13 @@
 
 # Install Apache if it isn't already
 
-if [ pidof apache2 > /dev/null ]; then
+if [ pgrep -x "apache2" > /dev/null ]; then
  echo "${GREEN}Apache already installed. Skipping installation${RESET}"
 else
  echo "${GREEN}Installing Apache...${RESET}"
  sudo apt-get -y install apache2
  sudo ufw allow 'Apache Full'
- sudo update-rc.d apache2 enable &&
+ sudo update-rc.d apache2 enable
 fi
 
 # Create directories
@@ -42,8 +42,9 @@ read -e -p "Enter your email address " email
 
 {
   sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/$fullDomain.conf
+  sudo sed "s|www.example.com|${fullDomain}|g" /etc/apache2/sites-available/$fullDomain.conf
   sudo sed "s|webmaster@localhost|${email}|g" /etc/apache2/sites-available/$fullDomain.conf
-  sudo sed "s|/var/www/html|/var/www/${fullDomain}/public|g" /etc/apache2/sites-available/$fullDomain.conf &&
+  sudo sed "s|\/var\/www\/html|\/var\/www\/${fullDomain}\/public|g" /etc/apache2/sites-available/$fullDomain.conf &&
   echo -e "${GREEN}Created website virtual host file${RESET}"
 } || {
   echo -e "${RED}Error creating website virtual host file${RESET}"
